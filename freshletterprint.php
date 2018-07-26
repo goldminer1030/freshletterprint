@@ -27,6 +27,8 @@ class FreshLetterPrint extends Module implements WidgetInterface {
 	function install() {
 		return parent::install()
 					 && Configuration::updateValue('FRESH_LETTER_VISIBLE', 1)
+					 && $this->registerHook('header')
+					 && $this->registerHook('displayProductAdditionalInfo')
 			;
 	}
 
@@ -46,9 +48,10 @@ class FreshLetterPrint extends Module implements WidgetInterface {
 		$helper->submit_action = 'submitFreshLetterPrint';
 		$helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
 		$helper->token = Tools::getAdminTokenLite('AdminModules');
-		$helper->tpl_vars = array('is_visible' => (int)Tools::getValue('FRESH_LETTER_VISIBLE'));
+		$helper->tpl_vars = array('fields_value' => $this->getConfigFieldsValues());
 
-		$fields = array(
+		$fields = array();
+		$fields[] = array(
 			'type' => 'switch',
 			'label' => 'Show letter module?',
 			'name' => 'FRESH_LETTER_VISIBLE',
@@ -82,6 +85,20 @@ class FreshLetterPrint extends Module implements WidgetInterface {
 		));
 	}
 
+	public function getConfigFieldsValues()
+	{
+		$values = array();
+		$values['FRESH_LETTER_VISIBLE'] = (int)Tools::getValue('FRESH_LETTER_VISIBLE', Configuration::get('FRESH_LETTER_VISIBLE'));
+
+		return $values;
+	}
+
+	public function hookHeader($param){
+		$this->context->controller->registerStylesheet('modules-fresh_letter_print', 'modules/'.$this->name.'/css/style.css', ['media' => 'all', 'priority' => 150]);
+
+		$this->context->controller->registerJavascript('modules-fresh_letter_print', 'modules/'.$this->name.'/js/fresh-letter-print.js', ['position' => 'bottom', 'priority' => 150]);
+	}
+
 	public function uninstall()
 	{
 		$this->_clearCache('*');
@@ -106,7 +123,7 @@ class FreshLetterPrint extends Module implements WidgetInterface {
 	public function getWidgetVariables($hookName, array $params)
 	{
 		return array(
-			'visible' => (int)Tools::getValue('FRESH_LETTER_VISIBLE')
+			'visible' => Configuration::get('FRESH_LETTER_VISIBLE')
 		);
 	}
 

@@ -1,0 +1,18 @@
+.fresh-letter-print {
+    padding: 20px 0;
+}
+.fresh-letter-print .fresh-letter-group {
+    margin-bottom: 10px;
+}
+.fresh-letter-print .fresh-letter-group label {
+    display: block;
+    text-align: left;
+}
+.fresh-letter-print .fresh-letter-input {
+    padding: 10px;
+    min-width: 280px;
+}
+.fresh-letter-print .fresh-letter-font {
+    padding: 10px;
+    min-width: 280px;
+}
